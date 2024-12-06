@@ -1,7 +1,7 @@
 # RSAFormer: A method of polyp segmentation with region self-attention transformer
 ## Overview
 
-RSAFormer is a novel architecture designed for the polyp segmentation task. It also works well in various kinds of medical segmentation tasks. In this model, we use dual decoders to obtain respective features and coarse segmentation maps. The maps are utilized to provide pixel classification information, which can be used in the region self-attention module for the subsequent feature enhancement. The core highlight is the flexible combination of decoders. We highly recommend you introduce different decoders in this network to adapt your task and get the best results! 
+RSAFormer is a novel architecture designed for the polyp segmentation task. It also works well in various kinds of medical segmentation tasks. In this model, we use dual decoders to obtain respective features and coarse segmentation maps. The maps are utilized to provide pixel classification information, which can be used in the region self-attention module for the subsequent feature enhancement. The core highlight is the flexible combination of decoders. We highly recommend introducing different decoders in this network to adapt to your task and achieve the best results!
 
 ## Architecture
 
