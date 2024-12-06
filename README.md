@@ -24,7 +24,7 @@ Download pretrained checkpoints from [Google Drive](https://drive.google.com/fil
 ## Download Dataset
 Download dataset from [Google Drive](https://drive.google.com/file/d/1a2jSM8cMR8huxt7VQNg1Jo4KCkZdp0TT/view?usp=sharing) and move it to the `data` directory.
 
-## Train && Test
+## Train and Test
 ```
 python expr.py
 ```
