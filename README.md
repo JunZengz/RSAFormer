@@ -5,7 +5,7 @@ RSAFormer is a novel architecture designed for the polyp segmentation task. It a
 
 ## Architecture
 
-![RSAFormer](\img\RSAFormer.png)
+![RSAFormer](img/RSAFormer.png)
 
 ## Create Environment
 ```
