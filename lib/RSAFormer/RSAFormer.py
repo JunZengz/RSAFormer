@@ -299,8 +299,7 @@ class RSAFormer(nn.Module):
 
         self.pdd_decoder = PAA_d(channel)
 
-        self.rsa1 = RSA(3 * channel, channel)
-        self.rsa2 = RSA(3 * channel, channel)
+        self.rsa = RSA(3 * channel, channel)
 
         self.out_simple = nn.Conv2d(channel, 1, 1)
         self.out_prediction = nn.Conv2d(4, 1, 1)
@@ -335,8 +334,8 @@ class RSAFormer(nn.Module):
         pdd_feature, prediction2 = self.pdd_decoder(x4_t, x3_t, x2_t)
 
         fused_feature = torch.cat([uper_feature, pdd_feature, edge_feature], dim=1)
-        prediction3 = self.rsa1(fused_feature, prediction1)
-        prediction4 = self.rsa2(fused_feature, prediction2)
+        prediction3 = self.rsa(fused_feature, prediction1)
+        prediction4 = self.rsa(fused_feature, prediction2)
 
         prediction1 = F.interpolate(prediction1, scale_factor=8, mode='bilinear')
         prediction2 = F.interpolate(prediction2, scale_factor=8, mode='bilinear')
