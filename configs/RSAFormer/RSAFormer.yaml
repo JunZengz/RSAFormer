@@ -1,0 +1,58 @@
+Model:
+    file_name: "RSAFormer"
+    name: "RSAFormer"
+    save_dir: "./files/RSAFormer"
+
+Train:
+    Dataset:
+        name: "PraNet"
+        type: "MyDataset"
+        root: "./data/PraNet/train"
+
+    DataLoader:
+        batch_size: 8
+        shuffle: True
+        num_workers: 2
+
+    Optimizer:
+        type: "Adam"
+        lr: 1.0e-04
+        weight_decay: 1.0e-04
+
+    Scheduler:
+        type: "PolyLr"
+        epochs: 300
+        gamma: 0.9
+        minimum_lr: 1.0e-07
+        warmup_iteration: 300
+        verbose: True
+
+    Logging:
+        filename: 'train'
+        save_all_ideal_epoachs: False
+        num: 1
+
+    early_stopping_patience: 50
+
+Validation:
+    Dataset:
+        name: "test"
+        type: "MyDataset"
+        root: "./data/PraNet/test"
+        testsets: 'test'
+    DataLoader:
+        shuffle: False
+        num_workers: 2
+    IdealDice: 0.8
+
+
+Test:
+    Dataset:
+        name: "PraNet"
+        type: "MyDataset"
+        root: "./data/PraNet/test"
+        testsets: ['Kvasir', 'CVC-300', 'CVC-ClinicDB', 'CVC-ColonDB', 'ETIS-LaribPolypDB']
+    DataLoader:
+        shuffle: False
+        num_workers: 2
+    TestEpochNum:
