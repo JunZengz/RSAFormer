@@ -28,7 +28,7 @@ Please cite our paper if you find the work useful:
 ```
 @article{yin2024rsaformer,
   title={RSAFormer: A method of polyp segmentation with region self-attention transformer},
-  author={Yin, Xuehui and Zeng, Jun and Hou, Tianxiao and Tang, Chao and Gan, Chenquan and Jain, Deepak Kumar and Garc{\'\i}a, Salvador},
+  author={Yin, Xuehui and Zeng, Jun and Hou, Tianxiao and Tang, Chao and Gan, Chenquan and Jain, Deepak Kumar and García, Salvador},
   journal={Computers in Biology and Medicine},
   volume={172},
   pages={108268},
