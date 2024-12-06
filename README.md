@@ -3,6 +3,10 @@
 
 RSAFormer is a novel architecture designed for the polyp segmentation task. It also works well in various kinds of medical segmentation tasks. In this model, we use dual decoders to obtain respective features and coarse segmentation maps. The maps are utilized to provide pixel classification information, which can be used in the region self-attention module for the subsequent feature enhancement. The core highlight is the flexible combination of decoders. We highly recommend you introduce different decoders in this network to adapt your task and get the best results! 
 
+## Architecture
+
+![RSAFormer](D:\Files\Research\MyPaper\RSAFormer\Yin xuehui\RSAFormer.png)
+
 ## Create Environment
 ```
 conda create -n RSAFormer python==3.8.16
