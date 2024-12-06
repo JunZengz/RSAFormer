@@ -171,7 +171,6 @@ class PDD(nn.Module):
         return f5
 
 
-
 class ChannelAttention(nn.Module):
     def __init__(self, in_planes, ratio=16):
         super(ChannelAttention, self).__init__()
@@ -268,9 +267,6 @@ class RSA(nn.Module):
         return a
 
 
-
-
-
 class RSAFormer(nn.Module):
     def __init__(self, channel=32):
         super(RSAFormer, self).__init__()
@@ -356,93 +352,6 @@ class RSAFormer(nn.Module):
         loss = loss1 + loss2 + loss3 + loss4
 
         return {'prediction': prediction, 'loss': loss}
-
-
-class RSAFormer_v2(nn.Module):
-    def __init__(self, channel=32):
-        super(RSAFormer_v2, self).__init__()
-
-        self.backbone = pvt_v2_b4()  # [64, 128, 320, 512]
-        path = './pretrained_pth/pvt_v2_b4.pth'
-        save_model = torch.load(path)
-        model_dict = self.backbone.state_dict()
-        state_dict = {k: v for k, v in save_model.items() if k in model_dict.keys()}
-        model_dict.update(state_dict)
-        self.backbone.load_state_dict(model_dict)
-
-        self.CFP_2 = CFPModule(128, d=8)
-        self.CFP_3 = CFPModule(320, d=8)
-        self.CFP_4 = CFPModule(512, d=8)
-
-        self.Translayer2_0 = BasicConv2d(128, channel, 1)
-        self.Translayer2_1 = BasicConv2d(128, channel, 1)
-        self.Translayer3_1 = BasicConv2d(320, channel, 1)
-        self.Translayer4_1 = BasicConv2d(512, channel, 1)
-        self.Translayer_low = BasicConv2d(64, channel, 2, 2)
-
-        self.ca = ChannelAttention(64)
-        self.sa = SpatialAttention()
-
-        self.decode_head = UPerHead_v2(num_classes=1, in_channels=[64, 128, 320, 512],
-                                       in_index=[0, 1, 2, 3], channels=128,
-                                       norm_cfg=dict(type='BN', requires_grad=True), dropout_ratio=0.1,
-                                       align_corners=False, decoder_params=dict(embed_dim=768))
-
-        self.pdd_decoder = PAA_d(channel)
-
-        self.rsa1 = RSA(3 * channel, channel)
-        self.rsa2 = RSA(3 * channel, channel)
-
-        self.out_simple = nn.Conv2d(channel, 1, 1)
-        self.out_prediction = nn.Conv2d(4, 1, 1)
-
-        self.loss_fn = bce_iou_loss
-        self.transforms = get_transforms()
-        self.data_augmentation = get_data_augmentation()
-
-    def forward(self, sample):
-        x = sample['images']
-        y = sample['masks']
-
-        # PVTv2
-        pvt = self.backbone(x)
-        x1 = pvt[0]
-        x2 = pvt[1]
-        x3 = pvt[2]
-        x4 = pvt[3]
-
-        x1 = self.ca(x1) * x1  # channel attention
-        edge_feature = self.sa(x1) * x1  # spatial attention
-        edge_feature = self.Translayer_low(edge_feature)
-
-        uper_context, prediction1 = self.decode_head([x1, x2, x3, x4])
-        uper_feature = self.Translayer2_0(uper_context)
-
-        cfp_out_2 = self.CFP_2(x2)
-        cfp_out_3 = self.CFP_3(x3)
-        cfp_out_4 = self.CFP_4(x4)
-        x2_t = self.Translayer2_1(cfp_out_2)
-        x3_t = self.Translayer3_1(cfp_out_3)
-        x4_t = self.Translayer4_1(cfp_out_4)
-        pdd_feature, prediction2 = self.pdd_decoder(x4_t, x3_t, x2_t)
-
-        fused_feature = torch.cat([uper_feature, pdd_feature, edge_feature], dim=1)
-        prediction3 = self.rsa1(fused_feature, prediction1)
-        prediction4 = self.rsa2(fused_feature, prediction2)
-
-        prediction5 = self.out_prediction(torch.cat([prediction1, prediction2, prediction3, prediction4], dim=1))
-        prediction1 = F.interpolate(prediction1, scale_factor=8, mode='bilinear')
-        prediction2 = F.interpolate(prediction2, scale_factor=8, mode='bilinear')
-        prediction5 = F.interpolate(prediction5, scale_factor=8, mode='bilinear')
-
-        loss1 = self.loss_fn(prediction1, y)
-        loss2 = self.loss_fn(prediction2, y)
-        loss5 = self.loss_fn(prediction5, y)
-
-        loss = loss1 + loss2 + loss5
-
-        return {'prediction': prediction5, 'loss': loss}
-
 
 
 if __name__ == '__main__':
