@@ -7,7 +7,7 @@ conda create -n RSAFormer python==3.8.16
 conda activate RSAFormer
 ```
 
-## Install Dependencies:
+## Install Dependencies
 ```    
 pip install -r requirements.txt
 ```
